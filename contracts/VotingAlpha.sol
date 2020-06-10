@@ -2,7 +2,7 @@ pragma solidity ^0.6.9;
 
 import "./Members.sol";
 import "./Proposals.sol";
-import "./Owned.sol";
+import "./Operated.sol";
 import "./SafeMath.sol";
 
 

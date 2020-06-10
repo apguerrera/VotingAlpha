@@ -9,8 +9,8 @@ def deploy_voting_alpha():
     # Deploy the Voting contracts and initialise
     voting_alpha = VotingAlpha.deploy({"from": accounts[0]})
     voting_alpha.initVotingAlpha({"from": accounts[0]})
-    voting_alpha.initAddOperator(accounts[0], {"from": accounts[0]})
     voting_alpha.initAddOperator(accounts[1], {"from": accounts[0]})
+    voting_alpha.initAddMember("Acct1", accounts[1], {"from": accounts[0]})
     voting_alpha.initComplete({"from": accounts[0]})
     return voting_alpha
 

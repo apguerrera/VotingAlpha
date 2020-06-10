@@ -16,6 +16,6 @@ def test_init_voting_alpha(voting_alpha):
     assert voting_alpha.numberOfProposals() == 0
     assert voting_alpha.numberOfMembers() == 1
 
-def test_voting_alpha_proposeNationalBill():
+def test_voting_alpha_proposeNationalBill(voting_alpha):
     bill_text = "This is the first bill"
     tx = voting_alpha.proposeNationalBill(bill_text, {"from": accounts[1]})

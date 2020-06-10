@@ -1,7 +1,7 @@
 pragma solidity ^0.6.9;
+// SPDX-License-Identifier: MIT
 
-import "../Utils/Owned.sol";
-
+import "./Owned.sol";
 
 contract Operated is Owned {
     mapping(address => bool) public operators;
