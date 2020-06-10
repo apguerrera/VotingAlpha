@@ -2,7 +2,16 @@ from brownie import *
 
 
 def deploy_voting_alpha():
+    # Deploy required library contracts
+    members = Members.deploy({"from": accounts[0]})
+    proposals = Proposals.deploy({"from": accounts[0]})
+
+    # Deploy the Voting contracts and initialise
     voting_alpha = VotingAlpha.deploy({"from": accounts[0]})
+    voting_alpha.initVotingAlpha({"from": accounts[0]})
+    voting_alpha.initAddOperator(accounts[0], {"from": accounts[0]})
+    voting_alpha.initAddOperator(accounts[1], {"from": accounts[0]})
+    voting_alpha.initComplete({"from": accounts[0]})
     return voting_alpha
 
 def main():

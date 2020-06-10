@@ -6,7 +6,6 @@ import "./Owned.sol";
 import "./SafeMath.sol";
 
 
-
 // ----------------------------------------------------------------------------
 //
 // Voting Alpha - MVP for DigiPol Australia
@@ -79,12 +78,14 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
     /// @dev Proposals
     // ----------------------------------------------------------------------------
-
+    
+    /// @dev Operator adds new bill to be voted on
     function proposeNationalBill(string memory billName) public  returns (uint proposalId) {
         require(operators[msg.sender]);
         proposalId = proposals.proposeNationalBill(billName);
     }
 
+    /// @dev Members vote on proposals
     function voteNo(uint proposalId) public {
         require(members.isMember(msg.sender));
         vote(proposalId, false);
@@ -93,6 +94,8 @@ contract VotingAlpha is Operated {
         require(members.isMember(msg.sender));
         vote(proposalId, true);
     }
+
+    /// @dev internals to handle both yes and no votes
     function vote(uint proposalId, bool yesNo) internal {
         proposals.vote(proposalId, yesNo);
         Proposals.ProposalType proposalType = proposals.getProposalType(proposalId);
@@ -100,25 +103,12 @@ contract VotingAlpha is Operated {
             proposals.close(proposalId);
         }
     }
-    function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent) {
-        return proposals.getVotingStatus(proposalId);
-    }
-
-    function numberOfProposals() public view returns (uint) {
-        return proposals.length();
-    }
-    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _description, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
-        Proposals.Proposal memory proposal = proposals.proposals[proposalId];
-        _proposalType = uint(proposal.proposalType);
-        _proposer = proposal.proposer;
-        _description = proposal.description;
-        _votedNo = proposal.votedNo;
-        _votedYes = proposal.votedYes;
-        _initiated = proposal.initiated;
-        _closed = proposal.closed;
-    }
 
 
+    // ----------------------------------------------------------------------------
+    /// @dev Members
+    // ----------------------------------------------------------------------------
+    
     function addMember(address memberAddress, string memory memberName) internal {
         members.add(memberAddress, memberName);
     }
@@ -130,26 +120,49 @@ contract VotingAlpha is Operated {
         require(operators[msg.sender]);
         members.add(_address, _name);
     }
-    function initRemoveMember(address _address) public {
+    function operatorRemoveMember(address _address) public {
         require(operators[msg.sender]);
         require(!members.isInitialised());
         members.remove(_address);
     }
 
+    // ----------------------------------------------------------------------------
+    /// @dev Getter functions
+    // ----------------------------------------------------------------------------
+
+    /// @dev Details for a given proposal ID
+    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _description, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
+        Proposals.Proposal memory proposal = proposals.proposals[proposalId];
+        _proposalType = uint(proposal.proposalType);
+        _proposer = proposal.proposer;
+        _description = proposal.description;
+        _votedNo = proposal.votedNo;
+        _votedYes = proposal.votedYes;
+        _initiated = proposal.initiated;
+        _closed = proposal.closed;
+    }
+    /// @dev Results for a given proposal ID
+    function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent) {
+        return proposals.getVotingStatus(proposalId);
+    }
+
+    function numberOfProposals() public view returns (uint) {
+        return proposals.length();
+    }
     function numberOfMembers() public view returns (uint) {
         return members.length();
     }
+
+    /// @dev Returns an array of the registered members
     function getMembers() public view returns (address[] memory) {
         return members.index;
+    }
+    function getMemberByIndex(uint _index) public view returns (address _member) {
+        return members.index[_index];
     }
     function getMemberData(address memberAddress) public view returns (bool _exists, uint _index, string memory _name) {
         Members.Member memory member = members.entries[memberAddress];
         return (member.exists, member.index, member.name);
     }
-    function getMemberByIndex(uint _index) public view returns (address _member) {
-        return members.index[_index];
-    }
-
-
 
 }
