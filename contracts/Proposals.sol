@@ -94,10 +94,7 @@ library Proposals {
 
 
     }
-    // TODO - Issues:
-    // 1. quorumReached is not accurate after the vote passes and accepts a new member
-    //    Unless storing it as a storage variable, we can't accurately track the status before the proposal is executed
-    // 2. To calculate required additional votes we need to apply a ceiling function which consumes gas
+
     function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent) {
         Proposal storage proposal = self.proposals[proposalId];
         isOpen = (proposal.closed == 0);

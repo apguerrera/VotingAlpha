@@ -8,18 +8,19 @@ import "./SafeMath.sol";
 
 
 // ----------------------------------------------------------------------------
-// From Decentralised Future Fund DAO
 //
+// Voting Alpha - MVP for DigiPol Australia
+//
+//
+// From Decentralised Future Fund DAO
 // https://github.com/bokkypoobah/DecentralisedFutureFundDAO
 //
-// Enjoy.
-//
-// (c) BokkyPooBah / Bok Consulting Pty Ltd 2018. The MIT Licence.
+// (c) Adrian Guerrera  / Deepyt Pty Ltd 2020. The MIT Licence.
 // ----------------------------------------------------------------------------
 // SPDX-License-Identifier: MIT
 
 
-contract VotingAlpha is Owned {
+contract VotingAlpha is Operated {
     using SafeMath for uint;
     using Members for Members.Data;
     using Proposals for Proposals.Data;
@@ -37,9 +38,14 @@ contract VotingAlpha is Owned {
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
 
+    // ----------------------------------------------------------------------------
+    /// @dev Initialisation functions
+    // ----------------------------------------------------------------------------
+
+    /// @dev Run this first to set the contract owner. 
     function initVotingAlpha() public {
         require(!members.isInitialised());
-        _initOwned(msg.sender);
+        _initOperated(msg.sender);
     }
 
     function initAddMember( string memory _name, address _address) public  {
@@ -47,16 +53,20 @@ contract VotingAlpha is Owned {
         members.add(_address, _name);
     }
 
-    // function initAddOperator( address _operator) public  {
-    //     require(isOwner());
-    //     members.add(_address, _name);
-    // }
+    /// @dev Add operators so that they can add members later. 
+    function initAddOperator( address _operator) public  {
+        require(isOwner());
+        addOperator(_operator);
+    }
 
     function initRemoveMember(address _address) public {
         require(isOwner());
         require(!members.isInitialised());
         members.remove(_address);
     }
+
+    /// @dev Once you have created the contract and added operators and members.
+    /// @dev Then you can finalise it. Once you do, you can no longer add operators.
     function initComplete() public {
         require(isOwner());
         require(!members.isInitialised());
@@ -65,8 +75,13 @@ contract VotingAlpha is Owned {
         _transferOwnership(address(0));
     }
 
+
+    // ----------------------------------------------------------------------------
+    /// @dev Proposals
+    // ----------------------------------------------------------------------------
+
     function proposeNationalBill(string memory billName) public  returns (uint proposalId) {
-        // onlyOperator
+        require(operators[msg.sender]);
         proposalId = proposals.proposeNationalBill(billName);
     }
 
@@ -89,7 +104,20 @@ contract VotingAlpha is Owned {
         return proposals.getVotingStatus(proposalId);
     }
 
-    
+    function numberOfProposals() public view returns (uint) {
+        return proposals.length();
+    }
+    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _description, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
+        Proposals.Proposal memory proposal = proposals.proposals[proposalId];
+        _proposalType = uint(proposal.proposalType);
+        _proposer = proposal.proposer;
+        _description = proposal.description;
+        _votedNo = proposal.votedNo;
+        _votedYes = proposal.votedYes;
+        _initiated = proposal.initiated;
+        _closed = proposal.closed;
+    }
+
 
     function addMember(address memberAddress, string memory memberName) internal {
         members.add(memberAddress, memberName);
@@ -98,6 +126,15 @@ contract VotingAlpha is Owned {
         members.remove(memberAddress);
     }
 
+    function operatorAddMember( string memory _name, address _address) public  {
+        require(operators[msg.sender]);
+        members.add(_address, _name);
+    }
+    function initRemoveMember(address _address) public {
+        require(operators[msg.sender]);
+        require(!members.isInitialised());
+        members.remove(_address);
+    }
 
     function numberOfMembers() public view returns (uint) {
         return members.length();
@@ -113,18 +150,6 @@ contract VotingAlpha is Owned {
         return members.index[_index];
     }
 
-    function numberOfProposals() public view returns (uint) {
-        return proposals.length();
-    }
-    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _description, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
-        Proposals.Proposal memory proposal = proposals.proposals[proposalId];
-        _proposalType = uint(proposal.proposalType);
-        _proposer = proposal.proposer;
-        _description = proposal.description;
-        _votedNo = proposal.votedNo;
-        _votedYes = proposal.votedYes;
-        _initiated = proposal.initiated;
-        _closed = proposal.closed;
-    }
+
 
 }
