@@ -6,35 +6,6 @@ network:
         gas_limit: false
         gas_price: false
         reverting_tx_gas_limit: false  # if false, reverting tx's will raise without broadcasting
-    networks:
-        # any settings given here will replace the defaults
-        development:
-            host: http://127.0.0.1
-            reverting_tx_gas_limit: 6721975
-            test_rpc:
-                cmd: ganache-cli
-                port: 8545
-                gas_limit: 6721975
-                accounts: 10
-                evm_version: istanbul
-                mnemonic: brownie
-        geth:
-            host: http://127.0.0.1:8546/
-            persist: true
-        securevote:
-            host: http://3.24.234.52:8545/
-            persist: true
-        # set your Infura API token to the environment variable WEB3_INFURA_PROJECT_ID
-        mainnet:
-            host: https://mainnet.infura.io/v3/$WEB3_INFURA_PROJECT_ID
-        goerli:
-            host: https://goerli.infura.io/v3/$WEB3_INFURA_PROJECT_ID
-        kovan:
-            host: https://kovan.infura.io/v3/$WEB3_INFURA_PROJECT_ID
-        rinkeby:
-            host: https://rinkeby.infura.io/v3/$WEB3_INFURA_PROJECT_ID
-        ropsten:
-            host: https://ropsten.infura.io/v3/$WEB3_INFURA_PROJECT_ID
 pytest:
     # these settings replace the defaults when running pytest
     gas_limit: 6721975
@@ -43,7 +14,7 @@ pytest:
     revert_traceback: false
 compiler:
     solc:
-        version: null
+        version: 0.5.4
         evm_version: null
         optimize: true
         runs: 200

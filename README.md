@@ -23,11 +23,32 @@ Install PipX
 Install using PipX
 `pipx install eth-brownie`
 
-### Compiling the contracts
+### Brownie commands
 
 Compile updated contracts: `brownie compile`
 
 Compile all contracts (even not changed ones): `brownie compile --all`
+
+Run script: `brownie run <script_path>`
+
+Run console (very useful for debugging): `brownie console`
+
+### Deploying Contract
+
+Run script: `brownie run scripts/deploy_VotingAlpha.py`
+
+### Deploying to SecureVote Chain
+Add SecureVote chain ID
+`brownie networks add Ethereum securevote host=http://54.153.142.251:8545/ chainid=0x8c25bce6`
+
+Deploy script: 
+`brownie run deploy_VotingAlpha.py --network securevote`
+
+New Proposal:
+`brownie run deploy_NewProposal.py --network securevote`
+
+Submit Vote
+`brownie run deploy_SubmitVote.py --network securevote`
 
 ### Running tests
 
@@ -39,16 +60,6 @@ Check code coverage: `brownie test --coverage`
 
 Check available fixtures: `brownie --fixtures .`
 
-
-### Brownie commands
-
-Run script: `brownie run <script_path>`
-
-Run console (very useful for debugging): `brownie console`
-
-### Deploying TimesSquare Contract
-
-Run script: `brownie run scripts/deploy_VotingAlpha.py`
 
 
 ## Testing with Docker

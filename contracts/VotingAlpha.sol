@@ -1,4 +1,4 @@
-pragma solidity ^0.6.9;
+pragma solidity ^0.5.4;
 
 import "./Members.sol";
 import "./Proposals.sol";
@@ -98,7 +98,8 @@ contract VotingAlpha is Operated {
     /// @dev internals to handle both yes and no votes
     function vote(uint proposalId, bool yesNo) internal {
         proposals.vote(proposalId, yesNo);
-        Proposals.ProposalType proposalType = proposals.getProposalType(proposalId);
+        /// @dev This can be used for more than one proposal type
+        // Proposals.ProposalType proposalType = proposals.getProposalType(proposalId);
         if (proposals.toExecute(proposalId)) {
             proposals.close(proposalId);
         }

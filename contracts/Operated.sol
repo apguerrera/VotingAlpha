@@ -1,4 +1,4 @@
-pragma solidity ^0.6.9;
+pragma solidity ^0.5.4;
 // SPDX-License-Identifier: MIT
 
 import "./Owned.sol";
@@ -41,7 +41,7 @@ contract Operated is Owned {
         }
         return false;
     }
-    function isOperated() public virtual view returns (bool) {
+    function isOperated() public /*virtual*/ view returns (bool) {
         return mIsOperated;
     }
     function setOperated(bool _isOperated) public  {

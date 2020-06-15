@@ -1,4 +1,4 @@
-pragma solidity ^0.6.9;
+pragma solidity ^0.5.4;
 // SPDX-License-Identifier: MIT
 
 contract Owned {
@@ -17,7 +17,7 @@ contract Owned {
         require(!initialised);
         mOwner = _owner;
         initialised = true;
-        emit OwnershipTransferred(address(0), mOwner);
+        emit OwnershipTransferred(address(0x0), mOwner);
     }
     function owner() public view returns (address) {
         return mOwner;

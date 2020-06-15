@@ -1,5 +1,4 @@
-pragma solidity ^0.6.9;
-
+pragma solidity ^0.5.4;
 // SPDX-License-Identifier: MIT
 
 
@@ -60,7 +59,7 @@ library Members {
     }
 }
 
-// SPDX-License-Identifier: MIT
+
 
 contract Owned {
 
@@ -96,7 +95,7 @@ contract Owned {
         mOwner = newOwner;
     }
 }
-// SPDX-License-Identifier: MIT
+
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -266,7 +265,7 @@ library SafeMath {
 // (c) BokkyPooBah / Bok Consulting Pty Ltd and
 // the ClubEth.App Project - 2018. The MIT Licence.
 // ----------------------------------------------------------------------------
-// SPDX-License-Identifier: MIT
+
 
 // ----------------------------------------------------------------------------
 // Proposals Data Structure
@@ -384,7 +383,7 @@ library Proposals {
         return self.proposals.length;
     }
 }
-// SPDX-License-Identifier: MIT
+
 
 
 contract Operated is Owned {
@@ -445,7 +444,6 @@ contract Operated is Owned {
 //
 // (c) Adrian Guerrera  / Deepyt Pty Ltd 2020. The MIT Licence.
 // ----------------------------------------------------------------------------
-// SPDX-License-Identifier: MIT
 
 
 contract VotingAlpha is Operated {
