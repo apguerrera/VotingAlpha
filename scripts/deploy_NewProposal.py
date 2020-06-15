@@ -5,8 +5,8 @@ def deploy_voting_alpha(voting_alpha_address):
     voting_alpha = VotingAlpha.at(voting_alpha_address)
     return voting_alpha
 
-def submit_new_proposal(voting_alpha, proposal_text):
-    voting_alpha.proposeNationalBill(proposal_text,{"from": accounts[0]})
+def submit_new_proposal(voting_alpha, spec_hash):
+    voting_alpha.proposeNationalBill(spec_hash,{"from": accounts[0]})
 
 def main():
     # add accounts if active network is ropsten
@@ -19,5 +19,5 @@ def main():
   
 
     voting_alpha =  deploy_voting_alpha(voting_alpha_address)
-    submit_new_proposal(voting_alpha, "Proposal")
+    submit_new_proposal(voting_alpha, '0xSpecHash'.encode().hex())
  

@@ -80,9 +80,9 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
     
     /// @dev Operator adds new bill to be voted on
-    function proposeNationalBill(string memory billName) public  returns (uint proposalId) {
+    function proposeNationalBill(bytes32 _specHash) public  returns (uint proposalId) {
         require(operators[msg.sender]);
-        proposalId = proposals.proposeNationalBill(billName);
+        proposalId = proposals.proposeNationalBill(_specHash);
     }
 
     /// @dev Members vote on proposals
@@ -131,16 +131,25 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
 
     /// @dev Details for a given proposal ID
-    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _description, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
+    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, bytes32 _specHash, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
         Proposals.Proposal memory proposal = proposals.proposals[proposalId];
         _proposalType = uint(proposal.proposalType);
         _proposer = proposal.proposer;
-        _description = proposal.description;
+        _specHash = proposal.specHash;
         _votedNo = proposal.votedNo;
         _votedYes = proposal.votedYes;
         _initiated = proposal.initiated;
         _closed = proposal.closed;
     }
+
+    function getSpecHash(uint proposalId) public view returns (bytes32) {
+        return proposals.getSpecHash(proposalId);
+    }
+    function getProposalId( bytes32 specHash) public view returns (uint256) {
+        return proposals.getProposalId(specHash);
+    }
+
+
     /// @dev Results for a given proposal ID
     function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent) {
         return proposals.getVotingStatus(proposalId);

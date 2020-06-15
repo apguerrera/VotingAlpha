@@ -278,7 +278,7 @@ library Proposals {
     struct Proposal {
         ProposalType proposalType;
         address proposer;
-        string  description;
+        bytes32  specHash;
         mapping(address => uint) voted;
         uint votedNo;
         uint votedYes;
@@ -295,11 +295,11 @@ library Proposals {
     event NewProposal(uint indexed proposalId, Proposals.ProposalType indexed proposalType, address indexed proposer); 
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
-    function proposeNationalBill(Data storage self, string memory billName) internal returns (uint proposalId) {
+    function proposeNationalBill(Data storage self, bytes32 memory _specHash) internal returns (uint proposalId) {
         Proposal memory proposal = Proposal({
             proposalType: ProposalType.NationalBill,
             proposer: msg.sender,
-            description: billName,
+            specHash: _specHash,
             votedNo: 0,
             votedYes: 0,
             initiated: now,
@@ -308,6 +308,7 @@ library Proposals {
         });
         self.proposals.push(proposal);
         proposalId = self.proposals.length - 1;
+        // AG mapping
         emit NewProposal(proposalId, proposal.proposalType, msg.sender);
     }
 
@@ -355,8 +356,8 @@ library Proposals {
     function getProposalType(Data storage self, uint proposalId) internal view returns (ProposalType) {
         return self.proposals[proposalId].proposalType;
     }
-    function getDescription(Data storage self, uint proposalId) internal view returns (string memory) {
-        return self.proposals[proposalId].description;
+    function getSpecHash(Data storage self, uint proposalId) internal view returns (string memory) {
+        return self.proposals[proposalId].specHash;
     }
     function getInitiated(Data storage self, uint proposalId) internal view returns (uint) {
         return self.proposals[proposalId].initiated;
@@ -500,9 +501,9 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
     
     /// @dev Operator adds new bill to be voted on
-    function proposeNationalBill(string memory billName) public  returns (uint proposalId) {
+    function proposeNationalBill(bytes32 memory _specHash) public  returns (uint proposalId) {
         require(operators[msg.sender]);
-        proposalId = proposals.proposeNationalBill(billName);
+        proposalId = proposals.proposeNationalBill(_specHash);
     }
 
     /// @dev Members vote on proposals
@@ -551,11 +552,11 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
 
     /// @dev Details for a given proposal ID
-    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _description, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
+    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _specHash, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
         Proposals.Proposal memory proposal = proposals.proposals[proposalId];
         _proposalType = uint(proposal.proposalType);
         _proposer = proposal.proposer;
-        _description = proposal.description;
+        _specHash = proposal.specHash;
         _votedNo = proposal.votedNo;
         _votedYes = proposal.votedYes;
         _initiated = proposal.initiated;

@@ -31,7 +31,7 @@ library Proposals {
     struct Proposal {
         ProposalType proposalType;
         address proposer;
-        string  description;
+        bytes32  specHash;
         mapping(address => uint) voted;
         uint votedNo;
         uint votedYes;
@@ -43,16 +43,17 @@ library Proposals {
     struct Data {
         bool initialised;
         Proposal[] proposals;
+        mapping(bytes32 => uint256) specHashToId;
     }
 
-    event NewProposal(uint indexed proposalId, Proposals.ProposalType indexed proposalType, address indexed proposer); 
+    event NewProposal(uint indexed proposalId, bytes32 specHash, Proposals.ProposalType indexed proposalType, address indexed proposer); 
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
-    function proposeNationalBill(Data storage self, string memory billName) internal returns (uint proposalId) {
+    function proposeNationalBill(Data storage self, bytes32 _specHash) internal returns (uint proposalId) {
         Proposal memory proposal = Proposal({
             proposalType: ProposalType.NationalBill,
             proposer: msg.sender,
-            description: billName,
+            specHash: _specHash,
             votedNo: 0,
             votedYes: 0,
             initiated: now,
@@ -61,9 +62,9 @@ library Proposals {
         });
         self.proposals.push(proposal);
         proposalId = self.proposals.length - 1;
-        emit NewProposal(proposalId, proposal.proposalType, msg.sender);
+        self.specHashToId[_specHash] = proposalId;
+        emit NewProposal(proposalId, _specHash, proposal.proposalType, msg.sender);
     }
-
 
     function vote(Data storage self, uint proposalId, bool yesNo) internal {
         Proposal storage proposal = self.proposals[proposalId];
@@ -108,8 +109,11 @@ library Proposals {
     function getProposalType(Data storage self, uint proposalId) internal view returns (ProposalType) {
         return self.proposals[proposalId].proposalType;
     }
-    function getDescription(Data storage self, uint proposalId) internal view returns (string memory) {
-        return self.proposals[proposalId].description;
+    function getSpecHash(Data storage self, uint proposalId) internal view returns (bytes32) {
+        return self.proposals[proposalId].specHash;
+    }
+    function getProposalId(Data storage self, bytes32 specHash) internal view returns (uint256) {
+        return self.specHashToId[specHash];
     }
     function getInitiated(Data storage self, uint proposalId) internal view returns (uint) {
         return self.proposals[proposalId].initiated;
