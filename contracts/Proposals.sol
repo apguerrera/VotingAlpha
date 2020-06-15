@@ -22,7 +22,7 @@ import "./SafeMath.sol";
 // Proposals Data Structure
 // ----------------------------------------------------------------------------
 
-library Proposals {
+library Proposals2 {
     enum ProposalType {
         NationalBill,                         //  0 NationalBill
         StateBill                             //  1 StateBill
@@ -46,7 +46,7 @@ library Proposals {
         mapping(bytes32 => uint256) specHashToId;
     }
 
-    event NewProposal(uint indexed proposalId, bytes32 specHash, Proposals.ProposalType indexed proposalType, address indexed proposer); 
+    event NewProposal(uint indexed proposalId, bytes32 specHash, Proposals2.ProposalType indexed proposalType, address indexed proposer);
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
     function proposeNationalBill(Data storage self, bytes32 _specHash) internal returns (uint proposalId) {
