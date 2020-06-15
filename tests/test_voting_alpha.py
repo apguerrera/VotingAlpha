@@ -18,6 +18,10 @@ def test_init_voting_alpha(voting_alpha):
 
 def test_voting_alpha_proposeNationalBill(voting_alpha):
     spec_hash = "FirstBillSpecHash".encode()
-    tx = voting_alpha.proposeNationalBill('0x'+spec_hash.hex(), {"from": accounts[1]})
-    assert voting_alpha.getSpecHash(0) == '0x'+spec_hash.hex()
+    spec_hash_hex = '0x'+spec_hash.hex()
+    tx = voting_alpha.proposeNationalBill(spec_hash_hex, {"from": accounts[1]})
+
+    proposal_id = voting_alpha.getProposalId(spec_hash_hex)
+    assert voting_alpha.getSpecHash(proposal_id) == spec_hash_hex
+    assert voting_alpha.getProposalId(spec_hash_hex) == proposal_id
 

@@ -22,7 +22,7 @@ network:
             host: http://127.0.0.1:8546/
             persist: true
         securevote:
-            host: http://54.153.142.251:8545/
+            host: http://3.24.234.52:8545/
             persist: true
         # set your Infura API token to the environment variable WEB3_INFURA_PROJECT_ID
         mainnet:

@@ -60,6 +60,7 @@ library Members {
     }
 }
 
+// SPDX-License-Identifier: MIT
 
 contract Owned {
 
@@ -95,6 +96,7 @@ contract Owned {
         mOwner = newOwner;
     }
 }
+// SPDX-License-Identifier: MIT
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -264,6 +266,7 @@ library SafeMath {
 // (c) BokkyPooBah / Bok Consulting Pty Ltd and
 // the ClubEth.App Project - 2018. The MIT Licence.
 // ----------------------------------------------------------------------------
+// SPDX-License-Identifier: MIT
 
 // ----------------------------------------------------------------------------
 // Proposals Data Structure
@@ -290,12 +293,13 @@ library Proposals {
     struct Data {
         bool initialised;
         Proposal[] proposals;
+        mapping(bytes32 => uint256) specHashToId;
     }
 
-    event NewProposal(uint indexed proposalId, Proposals.ProposalType indexed proposalType, address indexed proposer); 
+    event NewProposal(uint indexed proposalId, bytes32 specHash, Proposals.ProposalType indexed proposalType, address indexed proposer); 
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
-    function proposeNationalBill(Data storage self, bytes32 memory _specHash) internal returns (uint proposalId) {
+    function proposeNationalBill(Data storage self, bytes32 _specHash) internal returns (uint proposalId) {
         Proposal memory proposal = Proposal({
             proposalType: ProposalType.NationalBill,
             proposer: msg.sender,
@@ -308,10 +312,9 @@ library Proposals {
         });
         self.proposals.push(proposal);
         proposalId = self.proposals.length - 1;
-        // AG mapping
-        emit NewProposal(proposalId, proposal.proposalType, msg.sender);
+        self.specHashToId[_specHash] = proposalId;
+        emit NewProposal(proposalId, _specHash, proposal.proposalType, msg.sender);
     }
-
 
     function vote(Data storage self, uint proposalId, bool yesNo) internal {
         Proposal storage proposal = self.proposals[proposalId];
@@ -356,8 +359,11 @@ library Proposals {
     function getProposalType(Data storage self, uint proposalId) internal view returns (ProposalType) {
         return self.proposals[proposalId].proposalType;
     }
-    function getSpecHash(Data storage self, uint proposalId) internal view returns (string memory) {
+    function getSpecHash(Data storage self, uint proposalId) internal view returns (bytes32) {
         return self.proposals[proposalId].specHash;
+    }
+    function getProposalId(Data storage self, bytes32 specHash) internal view returns (uint256) {
+        return self.specHashToId[specHash];
     }
     function getInitiated(Data storage self, uint proposalId) internal view returns (uint) {
         return self.proposals[proposalId].initiated;
@@ -378,6 +384,7 @@ library Proposals {
         return self.proposals.length;
     }
 }
+// SPDX-License-Identifier: MIT
 
 
 contract Operated is Owned {
@@ -438,6 +445,7 @@ contract Operated is Owned {
 //
 // (c) Adrian Guerrera  / Deepyt Pty Ltd 2020. The MIT Licence.
 // ----------------------------------------------------------------------------
+// SPDX-License-Identifier: MIT
 
 
 contract VotingAlpha is Operated {
@@ -501,7 +509,7 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
     
     /// @dev Operator adds new bill to be voted on
-    function proposeNationalBill(bytes32 memory _specHash) public  returns (uint proposalId) {
+    function proposeNationalBill(bytes32 _specHash) public  returns (uint proposalId) {
         require(operators[msg.sender]);
         proposalId = proposals.proposeNationalBill(_specHash);
     }
@@ -552,7 +560,7 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
 
     /// @dev Details for a given proposal ID
-    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, string memory _specHash, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
+    function getProposal(uint proposalId) public view returns (uint _proposalType, address _proposer, bytes32 _specHash, uint _votedNo, uint _votedYes, uint _initiated, uint _closed) {
         Proposals.Proposal memory proposal = proposals.proposals[proposalId];
         _proposalType = uint(proposal.proposalType);
         _proposer = proposal.proposer;
@@ -562,6 +570,15 @@ contract VotingAlpha is Operated {
         _initiated = proposal.initiated;
         _closed = proposal.closed;
     }
+
+    function getSpecHash(uint proposalId) public view returns (bytes32) {
+        return proposals.getSpecHash(proposalId);
+    }
+    function getProposalId( bytes32 specHash) public view returns (uint256) {
+        return proposals.getProposalId(specHash);
+    }
+
+
     /// @dev Results for a given proposal ID
     function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent) {
         return proposals.getVotingStatus(proposalId);
