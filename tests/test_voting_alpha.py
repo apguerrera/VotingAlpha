@@ -17,5 +17,7 @@ def test_init_voting_alpha(voting_alpha):
     assert voting_alpha.numberOfMembers() == 1
 
 def test_voting_alpha_proposeNationalBill(voting_alpha):
-    spec_hash = "0xFirstBillSpecHash".encode().hex()
-    tx = voting_alpha.proposeNationalBill(spec_hash, {"from": accounts[1]})
+    spec_hash = "FirstBillSpecHash".encode()
+    tx = voting_alpha.proposeNationalBill('0x'+spec_hash.hex(), {"from": accounts[1]})
+    assert voting_alpha.getSpecHash(0) == '0x'+spec_hash.hex()
+
