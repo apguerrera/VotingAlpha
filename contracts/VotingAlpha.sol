@@ -29,9 +29,8 @@ contract VotingAlpha is Operated {
     Proposals.Data proposals;
 
     // Must be copied here to be added to the ABI
-    event MemberAdded(address indexed memberAddress, string name, uint totalAfter);
-    event MemberRemoved(address indexed memberAddress, string name, uint totalAfter);
-    event MemberNameUpdated(address indexed memberAddress, string oldName, string newName);
+    event MemberAdded(address indexed memberAddress, uint totalAfter);
+    event MemberRemoved(address indexed memberAddress, uint totalAfter);
 
     event NewProposal(uint indexed proposalId, Proposals.ProposalType indexed proposalType, address indexed proposer); 
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
@@ -47,9 +46,9 @@ contract VotingAlpha is Operated {
         _initOperated(msg.sender);
     }
 
-    function initAddMember( string memory _name, address _address) public  {
+    function initAddMember( address _address) public  {
         require(isOwner());
-        members.add(_address, _name);
+        members.add(_address, "");
     }
 
     /// @dev Add operators so that they can add members later. 
@@ -80,7 +79,7 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
     
     /// @dev Operator adds new bill to be voted on
-    function proposeNationalBill(bytes32 _specHash) public  returns (uint proposalId) {
+    function createNewBill(bytes32 _specHash) public  returns (uint proposalId) {
         require(operators[msg.sender]);
         proposalId = proposals.proposeNationalBill(_specHash);
     }
@@ -110,16 +109,16 @@ contract VotingAlpha is Operated {
     /// @dev Members
     // ----------------------------------------------------------------------------
     
-    function addMember(address memberAddress, string memory memberName) internal {
-        members.add(memberAddress, memberName);
+    function addMember(address memberAddress) internal {
+        members.add(memberAddress, "");
     }
     function removeMember(address memberAddress) internal {
         members.remove(memberAddress);
     }
 
-    function operatorAddMember( string memory _name, address _address) public  {
+    function operatorAddMember( address _address) public  {
         require(operators[msg.sender]);
-        members.add(_address, _name);
+        members.add(_address, "");
     }
     function operatorRemoveMember(address _address) public {
         require(operators[msg.sender]);
@@ -152,7 +151,7 @@ contract VotingAlpha is Operated {
 
 
     /// @dev Results for a given proposal ID
-    function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent) {
+    function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent, uint nVotes, uint nYes, uint nNo) {
         return proposals.getVotingStatus(proposalId);
     }
 

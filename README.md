@@ -13,7 +13,11 @@ A basic voting contract for the DigiPol MVP
 
 ## Smart Contracts (Developers) 
 
-### Installing Brownie
+### Installing Brownie (auto)
+
+> **bleeding edge setup script: `./_setup/01_install_deps.hs`**
+
+### Installing Brownie (manual)
 
 Install PipX
 `python3 -m pip install --user pipx`

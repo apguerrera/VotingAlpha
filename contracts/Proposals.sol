@@ -96,12 +96,16 @@ library Proposals {
 
     }
 
-    function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent) {
+    function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent, uint nVotes, uint nYes, uint nNo) {
         Proposal storage proposal = self.proposals[proposalId];
         isOpen = (proposal.closed == 0);
+        // TODO: I suggest this is done _outside_ the client; otherwise you really should be multiplying by a larger number (or just shift left 30 bits since they're uints. 30 bits ~= 10^9)
         voteCount = proposal.votedYes + proposal.votedNo;
         yesPercent = proposal.votedYes * 100 / voteCount;
         noPercent = proposal.votedNo * 100 / voteCount;
+        nVotes = voteCount;
+        nYes = yesPercent;
+        nNo = noPercent;
     }
     // function get(Data storage self, uint proposalId) public view returns (Proposal proposal) {
     //    return self.proposals[proposalId];

@@ -1,0 +1,25 @@
+{
+  "name": "voting-alpha-mini-sc",
+  "version": "0.2.0",
+  "description": "A basic voting contract for the DigiPol MVP",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xertrov/voting-alpha-mini-sc.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xertrov/voting-alpha-mini-sc/issues"
+  },
+  "homepage": "https://github.com/xertrov/voting-alpha-mini-sc#readme",
+  "dependencies": {
+    "ganache-cli": "^6.9.1"
+  }
+}
