@@ -15,7 +15,7 @@ pytest:
 compiler:
     solc:
         version: 0.5.4
-        evm_version: null
+        evm_version: "byzantium"
         optimize: true
         runs: 200
         minify_source: false

@@ -277,13 +277,13 @@ contract VotingAlpha is Operated {
     }
 
     /// @dev Members vote on proposals
-    function voteNo(uint proposalId) public {
+    function voteNo(bytes32 specHash) public {
         require(members.isMember(msg.sender));
-        vote(proposalId, false);
+        vote(proposals.getProposalId(specHash), false);
     }
-    function voteYes(uint proposalId) public {
+    function voteYes(bytes32 specHash) public {
         require(members.isMember(msg.sender));
-        vote(proposalId, true);
+        vote(proposals.getProposalId(specHash), true);
     }
 
     /// @dev internals to handle both yes and no votes
@@ -337,7 +337,7 @@ contract VotingAlpha is Operated {
     function getSpecHash(uint proposalId) public view returns (bytes32) {
         return proposals.getSpecHash(proposalId);
     }
-    function getProposalId( bytes32 specHash) public view returns (uint256) {
+    function getProposalId(bytes32 specHash) public view returns (uint256) {
         return proposals.getProposalId(specHash);
     }
 

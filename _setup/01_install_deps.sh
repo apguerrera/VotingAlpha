@@ -8,6 +8,10 @@ if ! (which brownie >/dev/null); then
   pipx install eth-brownie || echo 'FAILED: pipx install eth-brownie'
 fi
 
+if ! (which ganache >/dev/null); then
+  npm i -g ganache
+fi
+
 echo 'Setup complete. Use `brownie` to interact'
 
 
