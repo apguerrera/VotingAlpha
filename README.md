@@ -37,22 +37,19 @@ Run script: `brownie run <script_path>`
 
 Run console (very useful for debugging): `brownie console`
 
+For a console to the Flux/SecureVote chain, use `--network` and see details below
+
 ### Deploying Contract
 
 Run script: `brownie run scripts/deploy_VotingAlpha.py`
 
 ### Deploying to SecureVote Chain
-Add SecureVote chain ID
-`brownie networks add Ethereum securevote host=http://54.153.142.251:8545/ chainid=0x8c25bce6`
 
-Deploy script: 
-`brownie run deploy_VotingAlpha.py --network securevote`
-
-New Proposal:
-`brownie run deploy_NewProposal.py --network securevote`
-
-Submit Vote
-`brownie run deploy_SubmitVote.py --network securevote`
+* Add SecureVote chain ID: `brownie networks add Ethereum securevote host=http://54.153.142.251:8545/ chainid=0x8c25bce6`
+* Deploy script: `brownie run deploy_VotingAlpha.py --network securevote`
+* New Proposal: `brownie run deploy_NewProposal.py --network securevote`
+* Submit Vote: `brownie run deploy_SubmitVote.py --network securevote`
+* Console: `brownie console --network securevote`
 
 ### Running tests
 
