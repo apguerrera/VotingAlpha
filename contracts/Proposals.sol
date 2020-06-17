@@ -50,6 +50,7 @@ library Proposals2 {
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
     function proposeNationalBill(Data storage self, bytes32 _specHash) internal returns (uint proposalId) {
+        require(self.specHashToId[_specHash] == 0, "repeat-specHash");
         Proposal memory proposal = Proposal({
             proposalType: ProposalType.NationalBill,
             proposer: msg.sender,
@@ -92,8 +93,6 @@ library Proposals2 {
             proposal.voted[msg.sender] = 1;
             emit Voted(proposalId, msg.sender, yesNo, proposal.votedYes, proposal.votedNo);
         }
-
-
     }
 
     function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent, uint nVotes, uint nYes, uint nNo) {

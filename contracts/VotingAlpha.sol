@@ -122,6 +122,7 @@ library ProposalsInternal {
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
     function proposeNationalBill(Data storage self, bytes32 _specHash) internal returns (uint proposalId) {
+        require(self.specHashToId[_specHash] == 0, "repeat-specHash");
         Proposal memory proposal = Proposal({
             proposalType: ProposalType.NationalBill,
             proposer: msg.sender,
@@ -278,16 +279,16 @@ contract VotingAlpha is Operated {
 
     /// @dev Members vote on proposals
     function voteNo(bytes32 specHash) public {
-        require(members.isMember(msg.sender));
+        // auth check in vote func
         vote(proposals.getProposalId(specHash), false);
     }
     function voteYes(bytes32 specHash) public {
-        require(members.isMember(msg.sender));
         vote(proposals.getProposalId(specHash), true);
     }
 
     /// @dev internals to handle both yes and no votes
     function vote(uint proposalId, bool yesNo) internal {
+        require(members.isMember(msg.sender));
         proposals.vote(proposalId, yesNo);
         /// @dev This can be used for more than one proposal type
         // ProposalsInternal.ProposalType proposalType = proposals.getProposalType(proposalId);
