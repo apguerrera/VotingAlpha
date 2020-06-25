@@ -70,3 +70,37 @@ A Dockerfile is available if you are experiencing issues testing locally.
 run with:
 `docker build -f Dockerfile -t brownie .`
 `docker run -v $PWD:/usr/src brownie pytest tests`
+
+## Methods
+
+```
+initialised()
+setOperated(bool)
+operators(address)
+initComplete()
+operatorAddMember(address)
+getMemberData(address)
+getProposalId(bytes32)
+isOperator()
+initAddOperator(address)
+isOperated()
+initAddMember(address)
+initVotingAlpha()
+voteNo(bytes32)
+numberOfProposals()
+owner()
+isOwner()
+getVotingStatus(uint256)
+addOperator(address)
+getMembers()
+numberOfMembers()
+operatorRemoveMember(address)
+removeOperator(address)
+getMemberByIndex(uint256)
+getProposal(uint256)
+initRemoveMember(address)
+voteYes(bytes32)
+getSpecHash(uint256)
+mOwner()
+createNewBill(bytes32)
+```
