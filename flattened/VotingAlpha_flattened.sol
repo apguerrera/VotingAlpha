@@ -1,4 +1,5 @@
 pragma solidity ^0.5.4;
+
 // SPDX-License-Identifier: MIT
 
 
@@ -59,7 +60,7 @@ library Members {
     }
 }
 
-
+// SPDX-License-Identifier: MIT
 
 contract Owned {
 
@@ -77,7 +78,7 @@ contract Owned {
         require(!initialised);
         mOwner = _owner;
         initialised = true;
-        emit OwnershipTransferred(address(0), mOwner);
+        emit OwnershipTransferred(address(0x0), mOwner);
     }
     function owner() public view returns (address) {
         return mOwner;
@@ -95,7 +96,7 @@ contract Owned {
         mOwner = newOwner;
     }
 }
-
+// SPDX-License-Identifier: MIT
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -265,7 +266,7 @@ library SafeMath {
 // (c) BokkyPooBah / Bok Consulting Pty Ltd and
 // the ClubEth.App Project - 2018. The MIT Licence.
 // ----------------------------------------------------------------------------
-
+// SPDX-License-Identifier: MIT
 
 // ----------------------------------------------------------------------------
 // Proposals Data Structure
@@ -345,12 +346,16 @@ library Proposals {
 
     }
 
-    function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent) {
+    function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent, uint nVotes, uint nYes, uint nNo) {
         Proposal storage proposal = self.proposals[proposalId];
         isOpen = (proposal.closed == 0);
+        // TODO: I suggest this is done _outside_ the client; otherwise you really should be multiplying by a larger number (or just shift left 30 bits since they're uints. 30 bits ~= 10^9)
         voteCount = proposal.votedYes + proposal.votedNo;
         yesPercent = proposal.votedYes * 100 / voteCount;
         noPercent = proposal.votedNo * 100 / voteCount;
+        nVotes = voteCount;
+        nYes = yesPercent;
+        nNo = noPercent;
     }
     // function get(Data storage self, uint proposalId) public view returns (Proposal proposal) {
     //    return self.proposals[proposalId];
@@ -383,7 +388,7 @@ library Proposals {
         return self.proposals.length;
     }
 }
-
+// SPDX-License-Identifier: MIT
 
 
 contract Operated is Owned {
@@ -424,7 +429,7 @@ contract Operated is Owned {
         }
         return false;
     }
-    function isOperated() public virtual view returns (bool) {
+    function isOperated() public /*virtual*/ view returns (bool) {
         return mIsOperated;
     }
     function setOperated(bool _isOperated) public  {
@@ -444,6 +449,7 @@ contract Operated is Owned {
 //
 // (c) Adrian Guerrera  / Deepyt Pty Ltd 2020. The MIT Licence.
 // ----------------------------------------------------------------------------
+// SPDX-License-Identifier: MIT
 
 
 contract VotingAlpha is Operated {
@@ -456,9 +462,8 @@ contract VotingAlpha is Operated {
     Proposals.Data proposals;
 
     // Must be copied here to be added to the ABI
-    event MemberAdded(address indexed memberAddress, string name, uint totalAfter);
-    event MemberRemoved(address indexed memberAddress, string name, uint totalAfter);
-    event MemberNameUpdated(address indexed memberAddress, string oldName, string newName);
+    event MemberAdded(address indexed memberAddress, uint totalAfter);
+    event MemberRemoved(address indexed memberAddress, uint totalAfter);
 
     event NewProposal(uint indexed proposalId, Proposals.ProposalType indexed proposalType, address indexed proposer); 
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
@@ -474,9 +479,9 @@ contract VotingAlpha is Operated {
         _initOperated(msg.sender);
     }
 
-    function initAddMember( string memory _name, address _address) public  {
+    function initAddMember( address _address) public  {
         require(isOwner());
-        members.add(_address, _name);
+        members.add(_address, "");
     }
 
     /// @dev Add operators so that they can add members later. 
@@ -507,7 +512,7 @@ contract VotingAlpha is Operated {
     // ----------------------------------------------------------------------------
     
     /// @dev Operator adds new bill to be voted on
-    function proposeNationalBill(bytes32 _specHash) public  returns (uint proposalId) {
+    function createNewBill(bytes32 _specHash) public  returns (uint proposalId) {
         require(operators[msg.sender]);
         proposalId = proposals.proposeNationalBill(_specHash);
     }
@@ -525,7 +530,8 @@ contract VotingAlpha is Operated {
     /// @dev internals to handle both yes and no votes
     function vote(uint proposalId, bool yesNo) internal {
         proposals.vote(proposalId, yesNo);
-        Proposals.ProposalType proposalType = proposals.getProposalType(proposalId);
+        /// @dev This can be used for more than one proposal type
+        // Proposals.ProposalType proposalType = proposals.getProposalType(proposalId);
         if (proposals.toExecute(proposalId)) {
             proposals.close(proposalId);
         }
@@ -536,16 +542,16 @@ contract VotingAlpha is Operated {
     /// @dev Members
     // ----------------------------------------------------------------------------
     
-    function addMember(address memberAddress, string memory memberName) internal {
-        members.add(memberAddress, memberName);
+    function addMember(address memberAddress) internal {
+        members.add(memberAddress, "");
     }
     function removeMember(address memberAddress) internal {
         members.remove(memberAddress);
     }
 
-    function operatorAddMember( string memory _name, address _address) public  {
+    function operatorAddMember( address _address) public  {
         require(operators[msg.sender]);
-        members.add(_address, _name);
+        members.add(_address, "");
     }
     function operatorRemoveMember(address _address) public {
         require(operators[msg.sender]);
@@ -578,7 +584,7 @@ contract VotingAlpha is Operated {
 
 
     /// @dev Results for a given proposal ID
-    function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent) {
+    function getVotingStatus(uint proposalId) public view returns ( bool isOpen, uint voteCount, uint yesPercent, uint noPercent, uint nVotes, uint nYes, uint nNo) {
         return proposals.getVotingStatus(proposalId);
     }
 

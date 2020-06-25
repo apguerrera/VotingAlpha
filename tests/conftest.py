@@ -20,7 +20,7 @@ def voting_alpha(VotingAlpha, Members, Proposals):
     voting_alpha = VotingAlpha.deploy({"from": accounts[0]})
     voting_alpha.initVotingAlpha({"from": accounts[0]})
     voting_alpha.initAddOperator(accounts[1], {"from": accounts[0]})
-    voting_alpha.initAddMember("Acct1",accounts[1],  {"from": accounts[0]})
+    voting_alpha.initAddMember(accounts[1],  {"from": accounts[0]})
     voting_alpha.initComplete({"from": accounts[0]})
     return voting_alpha
 

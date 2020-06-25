@@ -22,7 +22,7 @@ import "./SafeMath.sol";
 // Proposals Data Structure
 // ----------------------------------------------------------------------------
 
-library Proposals {
+library Proposals2 {
     enum ProposalType {
         NationalBill,                         //  0 NationalBill
         StateBill                             //  1 StateBill
@@ -46,10 +46,11 @@ library Proposals {
         mapping(bytes32 => uint256) specHashToId;
     }
 
-    event NewProposal(uint indexed proposalId, bytes32 specHash, Proposals.ProposalType indexed proposalType, address indexed proposer); 
+    event NewProposal(uint indexed proposalId, bytes32 specHash, Proposals2.ProposalType indexed proposalType, address indexed proposer);
     event Voted(uint indexed proposalId, address indexed voter, bool vote, uint votedYes, uint votedNo);
 
     function proposeNationalBill(Data storage self, bytes32 _specHash) internal returns (uint proposalId) {
+        require(self.specHashToId[_specHash] == 0, "repeat-specHash");
         Proposal memory proposal = Proposal({
             proposalType: ProposalType.NationalBill,
             proposer: msg.sender,
@@ -92,16 +93,18 @@ library Proposals {
             proposal.voted[msg.sender] = 1;
             emit Voted(proposalId, msg.sender, yesNo, proposal.votedYes, proposal.votedNo);
         }
-
-
     }
 
-    function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent) {
+    function getVotingStatus(Data storage self, uint proposalId) internal view returns (bool isOpen, uint voteCount, uint yesPercent,uint noPercent, uint nVotes, uint nYes, uint nNo) {
         Proposal storage proposal = self.proposals[proposalId];
         isOpen = (proposal.closed == 0);
+        // TODO: I suggest this is done _outside_ the client; otherwise you really should be multiplying by a larger number (or just shift left 30 bits since they're uints. 30 bits ~= 10^9)
         voteCount = proposal.votedYes + proposal.votedNo;
         yesPercent = proposal.votedYes * 100 / voteCount;
         noPercent = proposal.votedNo * 100 / voteCount;
+        nVotes = voteCount;
+        nYes = yesPercent;
+        nNo = noPercent;
     }
     // function get(Data storage self, uint proposalId) public view returns (Proposal proposal) {
     //    return self.proposals[proposalId];

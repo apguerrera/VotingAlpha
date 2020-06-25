@@ -2,7 +2,7 @@ pragma solidity ^0.5.4;
 // SPDX-License-Identifier: MIT
 
 
-library Members {
+library Members2 {
     struct Member {
         bool exists;
         uint index;
